@@ -1,0 +1,137 @@
+[
+    {
+        "id": "HEEDB-1124",
+        "groupRank": 1,
+        "similarity": 0.982,
+        "diagnosis": [
+            "Acute Anterior MI",
+            "Sinus Tachycardia"
+        ],
+        "report": "Sinus tachycardia. Marked ST elevation in V1-V4 consistent with acute anterior infarct.",
+        "demographics": "Male, 65y"
+    },
+    {
+        "id": "HEEDB-8821",
+        "groupRank": 1,
+        "similarity": 0.975,
+        "diagnosis": [
+            "STEMI",
+            "Acute MI"
+        ],
+        "report": "Emergency protocol. Significant ST elevation. Critical finding.",
+        "demographics": "Female, 71y"
+    },
+    {
+        "id": "HEEDB-3321",
+        "groupRank": 1,
+        "similarity": 0.961,
+        "diagnosis": [
+            "Acute Septal MI",
+            "Left Ventricular Hypertrophy"
+        ],
+        "report": "Consider acute injury pattern in septal leads.",
+        "demographics": "Male, 58y"
+    },
+    {
+        "id": "HEEDB-5519",
+        "groupRank": 1,
+        "similarity": 0.942,
+        "diagnosis": [
+            "Anterior Wall MI"
+        ],
+        "report": "Marked elevation in precordial leads.",
+        "demographics": "Male, 62y"
+    },
+    {
+        "id": "HEEDB-6620",
+        "groupRank": 1,
+        "similarity": 0.938,
+        "diagnosis": [
+            "STEMI (LAD)"
+        ],
+        "report": "Hyperacute T waves observed.",
+        "demographics": "Female, 60y"
+    },
+    {
+        "id": "HEEDB-7721",
+        "groupRank": 1,
+        "similarity": 0.892,
+        "diagnosis": [
+            "Acute MI"
+        ],
+        "report": "ST changes in multiple leads.",
+        "demographics": "Male, 70y"
+    },
+    {
+        "id": "HEEDB-9922",
+        "groupRank": 1,
+        "similarity": 0.881,
+        "diagnosis": [
+            "STEMI"
+        ],
+        "report": "Inferior wall elevation.",
+        "demographics": "Female, 65y"
+    },
+    {
+        "id": "HEEDB-1029",
+        "groupRank": 2,
+        "similarity": 0.945,
+        "diagnosis": [
+            "Atrial Flutter",
+            "2:1 Block"
+        ],
+        "report": "Sawtooth pattern in II, III, aVF.",
+        "demographics": "Male, 77y"
+    },
+    {
+        "id": "HEEDB-2044",
+        "groupRank": 2,
+        "similarity": 0.912,
+        "diagnosis": [
+            "Atrial Flutter"
+        ],
+        "report": "Regular tachycardia with flutter waves.",
+        "demographics": "Female, 80y"
+    },
+    {
+        "id": "HEEDB-3055",
+        "groupRank": 2,
+        "similarity": 0.885,
+        "diagnosis": [
+            "Atrial Arrhythmia"
+        ],
+        "report": "Rapid atrial rate, variable block.",
+        "demographics": "Male, 69y"
+    },
+    {
+        "id": "HEEDB-4011",
+        "groupRank": 3,
+        "similarity": 0.820,
+        "diagnosis": [
+            "Pericarditis"
+        ],
+        "report": "Diffuse ST elevation without reciprocal changes.",
+        "demographics": "Male, 45y"
+    },
+    {
+        "id": "HEEDB-4022",
+        "groupRank": 3,
+        "similarity": 0.785,
+        "diagnosis": [
+            "Pericarditis",
+            "Sinus Tachycardia"
+        ],
+        "report": "PR depression noted in lead II.",
+        "demographics": "Female, 32y"
+    },
+    {
+        "id": "HEEDB-9001",
+        "groupRank": 4,
+        "similarity": 0.650,
+        "diagnosis": [
+            "Brugada Type 1"
+        ],
+        "report": "Coved ST elevation in V1/V2.",
+        "demographics": "Male, 35y"
+    }
+]
