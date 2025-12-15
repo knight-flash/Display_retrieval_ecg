@@ -48,11 +48,11 @@ const CaseDetailModal = ({ caseData, detailedCase, onClose }) => {
                     <div className="grid grid-cols-12 gap-6 h-full min-h-[600px]">
 
                         {/* TOP: Full 12-Lead ECG View */}
-                        <div className="col-span-12 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[560px] shrink-0">
-                            <div className="px-4 py-2 border-b border-slate-100 bg-white flex justify-between items-center">
+                        <div className="col-span-12 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col shrink-0">
+                            <div className="px-4 py-2 border-b border-slate-100 bg-white flex justify-between items-center shrink-0">
                                 <h3 className="font-bold text-slate-700 flex items-center gap-2 text-sm"><Activity size={16} className="text-red-500" /> Historical 12-Lead Record</h3>
                             </div>
-                            <div className="flex-1 relative p-1">
+                            <div className="flex-1 relative min-h-[400px] max-h-[560px] p-1">
                                 {/* Reusing ECGCanvas with real leads if available */}
                                 <ECGCanvas
                                     activeGroupRank={caseData.groupRank || 1}
