@@ -68,29 +68,28 @@ function App() {
   }, [activeGroup, allCases]);
 
   // 3. Dynamic Case Loading
+  // Vite's import.meta.glob returns an object where keys are the relative paths from this file
   const caseModules = useMemo(() => import.meta.glob('./data/database/cases/*.json'), []);
   const [detailedCase, setDetailedCase] = useState(null);
 
-  // Load detailed data when a case is selected
+  // Determine the case to display on the monitor (Selected case or Default fall-through if handled by init)
+  // For rendering purposes, we prioritize the selectedCase.
+  const currentMonitorCase = selectedCase || (filteredCases.length > 0 ? filteredCases[0] : null);
+
+  // Function 1: Load detailed data when a case is CLICKED (User Action)
   React.useEffect(() => {
-    if (!selectedCase) {
-      setDetailedCase(null);
-      return;
-    }
+    if (!selectedCase) return; // Only process if user explicitly selected something
 
     const loadCaseData = async () => {
       try {
-        // Construct the key expected by import.meta.glob
-        // selectedCase.fileName is typically "cases/filename.json"
-        // We need "./data/database/cases/filename.json"
-        const filename = selectedCase.fileName.split('/').pop();
-        const path = `./data/database/cases/${filename}`;
+        const targetFilename = selectedCase.fileName.replace(/^.*[\\\/]/, '');
+        const modulePath = Object.keys(caseModules).find(key => key.endsWith(targetFilename));
 
-        if (caseModules[path]) {
-          const mod = await caseModules[path]();
-          setDetailedCase(mod.default || mod); // Handle potential default export wrapper
+        if (modulePath) {
+          const mod = await caseModules[modulePath]();
+          setDetailedCase(mod.default || mod);
         } else {
-          console.error(`Case file not found: ${path}`);
+          console.error(`Case file not found for: ${targetFilename}`);
           setDetailedCase(null);
         }
       } catch (err) {
@@ -101,6 +100,34 @@ function App() {
 
     loadCaseData();
   }, [selectedCase, caseModules]);
+
+  // Function 2: Initialize Monitor on Startup (Automatic Trigger based on Index)
+  // This mirrors the logic of loadCaseData but is triggered by initialization, not clicks.
+  React.useEffect(() => {
+    // Only initialize if NO case is selected yet and we have cases available
+    if (selectedCase || filteredCases.length === 0) return;
+
+    const initializeMonitor = async () => {
+      try {
+        // Default to the first case in the index
+        const defaultCase = filteredCases[0];
+        console.log("Initializing Monitor with default case:", defaultCase.id);
+
+        const targetFilename = defaultCase.fileName.replace(/^.*[\\\/]/, '');
+        const modulePath = Object.keys(caseModules).find(key => key.endsWith(targetFilename));
+
+        if (modulePath) {
+          const mod = await caseModules[modulePath]();
+          // We set detailedCase directly, effectively "auto-selecting" it for viewing without changing selectedCase state
+          setDetailedCase(mod.default || mod);
+        }
+      } catch (err) {
+        console.error("Error initializing monitor:", err);
+      }
+    };
+
+    initializeMonitor();
+  }, [selectedCase, filteredCases, caseModules]);
 
   return (
     <div className="flex h-screen bg-slate-100 font-sans text-slate-800 overflow-hidden selection:bg-blue-100">
@@ -118,7 +145,12 @@ function App() {
         <main className="flex-1 p-4 grid grid-cols-12 gap-4 overflow-hidden">
 
           {/* LEFT: Patient Monitor Panel */}
-          <MonitorPanel activeGroup={activeGroup} detailedCase={detailedCase} />
+          {/* Pass displayCase so we can show previewSignal while detailedCase is loading or if no case is selected */}
+          <MonitorPanel
+            activeGroup={activeGroup}
+            detailedCase={detailedCase}
+            displayCase={currentMonitorCase}
+          />
 
           {/* RIGHT: Retrieval Panel (Diagnosis + Evidence List) */}
           <RetrievalList
