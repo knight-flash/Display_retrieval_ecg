@@ -15,7 +15,10 @@ const MonitorPanel = ({ activeGroup, detailedCase, displayCase }) => {
     return (
         <div className="col-span-7 flex flex-col h-full min-h-0 gap-3">
             {/* Patient Info Card */}
-            <PatientHeader />
+            <PatientHeader
+                caseData={displayCase}
+                detailedData={detailedCase}
+            />
 
             {/* Main ECG Display */}
             <div className="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 relative flex flex-col overflow-hidden">

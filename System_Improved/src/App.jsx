@@ -41,7 +41,7 @@ function App() {
         diagnosis: diagArray,
         groupRank: rank,
         report: c.report || `Automated generated report for case ${c.id}. The patient exhibits signs consistent with the tagged diagnoses.`,
-        demographics: c.demographics || "Male, 65yr"
+        demographics: c.demographics || "None provided"
       };
     });
   }, []);
@@ -60,11 +60,15 @@ function App() {
     return dynamicGroups.length > 0 ? dynamicGroups[0] : null;
   }, [activeGroupId, dynamicGroups]);
 
+  // SEPARATE QUERY CASE AND RETRIEVAL RESULTS
+  // 1. Identify the Query Case (The "Input" Patient)
+  const queryCase = useMemo(() => allCases.find(c => c.isQueryCase), [allCases]);
 
-  // Filter cases based on the active diagnosis group
+  // 2. Filter retrieval results (exclude the query case itself from the list)
   const filteredCases = useMemo(() => {
     if (!activeGroup) return [];
-    return allCases.filter(c => c.groupRank === activeGroup.rank);
+    // Filter by group AND exclude the query case
+    return allCases.filter(c => c.groupRank === activeGroup.rank && !c.isQueryCase);
   }, [activeGroup, allCases]);
 
   // 3. Dynamic Case Loading
@@ -72,9 +76,9 @@ function App() {
   const caseModules = useMemo(() => import.meta.glob('./data/database/cases/*.json'), []);
   const [detailedCase, setDetailedCase] = useState(null);
 
-  // Determine the case to display on the monitor (Selected case or Default fall-through if handled by init)
-  // For rendering purposes, we prioritize the selectedCase.
-  const currentMonitorCase = selectedCase || (filteredCases.length > 0 ? filteredCases[0] : null);
+  // Determine the case to display on the monitor:
+  // Priority: 1. User Selected Case (Click) -> 2. Query Case (Default) -> 3. First Result (Fallback)
+  const currentMonitorCase = selectedCase || queryCase || (filteredCases.length > 0 ? filteredCases[0] : null);
 
   // Function 1: Load detailed data when a case is CLICKED (User Action)
   React.useEffect(() => {
@@ -101,19 +105,21 @@ function App() {
     loadCaseData();
   }, [selectedCase, caseModules]);
 
-  // Function 2: Initialize Monitor on Startup (Automatic Trigger based on Index)
-  // This mirrors the logic of loadCaseData but is triggered by initialization, not clicks.
+  // Function 2: Initialize Monitor on Startup (Defaults to Query Case)
   React.useEffect(() => {
-    // Only initialize if NO case is selected yet and we have cases available
-    if (selectedCase || filteredCases.length === 0) return;
+    // Only initialize if NO case is selected yet
+    if (selectedCase) return;
 
     const initializeMonitor = async () => {
       try {
-        // Default to the first case in the index
-        const defaultCase = filteredCases[0];
-        console.log("Initializing Monitor with default case:", defaultCase.id);
+        // Default to the Query Case, or fallback to first result
+        const targetCase = queryCase || filteredCases[0];
 
-        const targetFilename = defaultCase.fileName.replace(/^.*[\\\/]/, '');
+        if (!targetCase) return;
+
+        console.log("Initializing Monitor with default case:", targetCase.id);
+
+        const targetFilename = targetCase.fileName.replace(/^.*[\\\/]/, '');
         const modulePath = Object.keys(caseModules).find(key => key.endsWith(targetFilename));
 
         if (modulePath) {
@@ -127,7 +133,7 @@ function App() {
     };
 
     initializeMonitor();
-  }, [selectedCase, filteredCases, caseModules]);
+  }, [selectedCase, queryCase, filteredCases, caseModules]);
 
   return (
     <div className="flex h-screen bg-slate-100 font-sans text-slate-800 overflow-hidden selection:bg-blue-100">
