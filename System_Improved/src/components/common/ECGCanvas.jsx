@@ -1,116 +1,116 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { generateECGPath } from '../../utils/ecgRenderer';
+import React from 'react';
+import { generateECGPath, dataToPath } from '../../utils/ecgRenderer';
 
-// Grid Background Component
-export const ECGGrid = ({ children, className = "" }) => (
-    <div className={`relative bg-white overflow-hidden ${className}`}>
-        {/* Small Grid (1mm) */}
-        <div className="absolute inset-0 pointer-events-none z-0"
-            style={{
-                backgroundImage: 'linear-gradient(#ffe4e6 1px, transparent 1px), linear-gradient(90deg, #ffe4e6 1px, transparent 1px)',
-                backgroundSize: '10px 10px'
-            }}>
-        </div>
-        {/* Large Grid (5mm) */}
-        <div className="absolute inset-0 pointer-events-none z-0"
-            style={{
-                backgroundImage: 'linear-gradient(#fca5a5 1px, transparent 1px), linear-gradient(90deg, #fca5a5 1px, transparent 1px)',
-                backgroundSize: '50px 50px'
-            }}>
-        </div>
-        <div className="relative z-10 h-full w-full">{children}</div>
-    </div>
-);
-
-// Main Drawing Component
-const ECGCanvas = ({ activeGroupRank = 1, isCompact = false }) => {
-    const leads = [
+/**
+ * ECGCanvas Component - Full Implementation
+ * 
+ * Features:
+ * 1. Full 12-lead scrollable display
+ * 2. Grid background moves with content (CSS-based)
+ * 3. Responsive fluid width (100% container)
+ * 4. Fixed bottom time axis
+ * 5. Proper scrolling functionality
+ */
+const ECGCanvas = ({ activeGroupRank = 1, isCompact = false, signalData = null, leads = null }) => {
+    const leadNames = [
         "I", "II", "III", "aVR", "aVL", "aVF",
         "V1", "V2", "V3", "V4", "V5", "V6"
     ];
 
-    const containerRef = useRef(null);
-    const [width, setWidth] = useState(500); // Default width
-
-    useEffect(() => {
-        if (!containerRef.current) return;
-
-        const resizeObserver = new ResizeObserver((entries) => {
-            for (let entry of entries) {
-                if (entry.contentRect) {
-                    setWidth(entry.contentRect.width);
-                }
-            }
-        });
-
-        resizeObserver.observe(containerRef.current);
-
-        return () => {
-            resizeObserver.disconnect();
-        };
-    }, []);
-
     return (
-        <div ref={containerRef} className="h-full w-full flex flex-col relative bg-white">
+        <div className="h-full w-full relative bg-white overflow-hidden">
 
-            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar relative bg-white">
-                {/* Grid Background applied to the scrolling content wrapper 
-             so it extends and scrolls with content 
-         */}
-                <div className="absolute top-0 left-0 min-w-full min-h-full pointer-events-none z-0"
+            {/* Scrollable Container with Grid Background */}
+            <div className="h-full overflow-y-auto custom-scrollbar relative">
+
+                {/* Content Wrapper with ECG Grid Background */}
+                <div className="relative w-full"
                     style={{
-                        width: '100%',
-                        height: `${leads.length * 160}px`,
-                        backgroundImage: 'linear-gradient(#ffe4e6 1px, transparent 1px), linear-gradient(90deg, #ffe4e6 1px, transparent 1px), linear-gradient(#fca5a5 1px, transparent 1px), linear-gradient(90deg, #fca5a5 1px, transparent 1px)',
+                        // Standard ECG Grid: Small 1mm boxes, Large 5mm boxes
+                        backgroundImage: `
+                            linear-gradient(#ffe4e6 1px, transparent 1px), 
+                            linear-gradient(90deg, #ffe4e6 1px, transparent 1px), 
+                            linear-gradient(#fca5a5 1px, transparent 1px), 
+                            linear-gradient(90deg, #fca5a5 1px, transparent 1px)
+                        `,
                         backgroundSize: '10px 10px, 10px 10px, 50px 50px, 50px 50px',
-                        backgroundPosition: '0 0, 0 0, 0 0, 0 0'
+                        backgroundAttachment: 'local' // Ensures bg scrolls with content
                     }}
-                ></div>
+                >
+                    {leadNames.map((leadName, i) => {
+                        let pathData;
+                        // Use real lead data if available (Scale: 50 units = 1mV to match 10mm grid)
+                        if (leads && leads[leadName]) {
+                            pathData = dataToPath(leads[leadName], 500, 80, 50);
+                        }
+                        // Fallback to preview signal if available
+                        else if (signalData) {
+                            pathData = dataToPath(signalData, 500, 80, 50);
+                        }
+                        // Fallback to synthetic
+                        else {
+                            pathData = generateECGPath(500, 40, "dynamic", i, activeGroupRank);
+                        }
 
-                <div className="flex flex-col w-full border-l border-t border-red-200 relative z-10">
-                    {leads.map((leadName, idx) => (
-                        <div key={idx} className="relative border-b border-r border-red-200 overflow-hidden shrink-0 h-40">
-                            <span className="absolute top-1 left-1.5 text-[10px] font-bold text-slate-700 z-20">{leadName}</span>
-                            <div className="h-full w-full flex items-center">
-                                {/* SVG Width is dynamic based on container width */}
-                                <svg className="w-full h-full" preserveAspectRatio="none" viewBox={`0 0 ${width} 80`}>
-                                    <path
-                                        d={generateECGPath(width, 40, "dynamic", idx, activeGroupRank)}
-                                        fill="none"
-                                        stroke="#0f172a"
-                                        strokeWidth="1.5"
-                                        strokeLinejoin="round"
-                                        vectorEffect="non-scaling-stroke"
-                                    />
-                                </svg>
+                        return (
+                            <div key={i} className="h-40 border-b border-red-200 relative shrink-0">
+                                {/* Lead Label */}
+                                <span className="absolute top-1 left-2 text-xs font-bold text-slate-500 z-10 bg-white/60 px-1 rounded backdrop-blur-[2px]">
+                                    {leadName}
+                                </span>
+
+                                {/* ECG Path Container */}
+                                <div className="absolute inset-0 flex items-center w-full h-full">
+                                    {/* 
+                                    SVG Configuration:
+                                    - width/height: 100% to fill container
+                                    - viewBox: "0 0 500 80" defines coordinate system
+                                    - preserveAspectRatio: "none" stretches to fit container
+                                    - vectorEffect: "non-scaling-stroke" keeps line thickness constant during stretch
+                                     */}
+                                    <svg viewBox="0 0 500 80" preserveAspectRatio="none" className="w-full h-full text-slate-800 display-block">
+                                        <path
+                                            d={pathData}
+                                            fill="none"
+                                            stroke="#0f172a"
+                                            strokeWidth="1.5"
+                                            vectorEffect="non-scaling-stroke"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+                                    </svg>
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                    {!isCompact && <div className="h-8 shrink-0"></div>}
+                        );
+                    })}
+
+                    {/* Bottom Spacer to ensure last lead doesn't get cut off by Time Axis */}
+                    {!isCompact && <div className="h-4" />}
                 </div>
             </div>
 
+            {/* Time Axis (Fixed at bottom of Component) */}
             {!isCompact && (
-                <div className="h-6 w-full bg-red-50/90 backdrop-blur border-t border-red-200 relative shrink-0 select-none z-20 shadow-sm">
-                    <div className="absolute inset-0 w-full h-full overflow-hidden">
-                        <div className="w-full h-full relative">
-                            {/* Dynamic time axis ticks to match resizing logic */}
-                            {Array.from({ length: Math.ceil(width / 250) + 1 }).map((_, i) => (
-                                <div
-                                    key={i}
-                                    className="absolute bottom-0 h-full flex flex-col justify-end items-center"
-                                    style={{ left: `${i * 250}px`, transform: 'translateX(-50%)' }}
-                                >
-                                    <span className="text-[9px] text-red-800 font-mono font-medium mb-0.5">{i}s</span>
-                                    <div className="h-1.5 w-px bg-red-400"></div>
-                                </div>
-                            ))}
-                        </div>
+                <div className="h-8 shrink-0 bg-white/95 backdrop-blur border-t border-red-200 relative select-none z-20 shadow-[0_-2px_10px_rgba(0,0,0,0.02)]">
+                    {/* Ticks 0-10s using Percentage for Fluid Layout */}
+                    <div className="absolute inset-0 w-full">
+                        {Array.from({ length: 11 }).map((_, i) => (
+                            <div key={i} className="absolute top-0 h-full flex flex-col items-center" style={{ left: `${i * 10}%`, transform: 'translateX(-50%)' }}>
+                                <div className="h-1.5 w-px bg-red-400 mb-0.5"></div>
+                                <span className="text-[10px] text-slate-400 font-mono font-medium leading-none">
+                                    {i}s
+                                </span>
+                            </div>
+                        ))}
+                        {/* Minor Ticks (every 2%) */}
+                        {Array.from({ length: 51 }).map((_, i) => (
+                            <div key={`tick-${i}`} className="absolute top-0 h-1 w-px bg-red-200" style={{ left: `${i * 2}%` }}></div>
+                        ))}
                     </div>
                 </div>
             )}
         </div>
-    );
+    )
 };
 
 export default ECGCanvas;

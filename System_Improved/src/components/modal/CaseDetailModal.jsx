@@ -12,7 +12,7 @@ import { generateECGPath } from '../../utils/ecgRenderer';
 
 
 
-const CaseDetailModal = ({ caseData, onClose }) => {
+const CaseDetailModal = ({ caseData, detailedCase, onClose }) => {
     if (!caseData) return null;
 
     return (
@@ -26,7 +26,7 @@ const CaseDetailModal = ({ caseData, onClose }) => {
                         <div>
                             <h2 className="font-bold text-lg text-slate-900 leading-tight">Reference Case: {caseData.id}</h2>
                             <span className="flex items-center gap-1 text-xs text-green-600 font-medium">
-                                <CheckCircle2 size={12} /> Verified Diagnosis
+                                <CheckCircle2 size={12} /> Verified Diagnosis {detailedCase ? '• Detailed Data Loaded' : ''}
                             </span>
                         </div>
                     </div>
@@ -53,8 +53,12 @@ const CaseDetailModal = ({ caseData, onClose }) => {
                                 <h3 className="font-bold text-slate-700 flex items-center gap-2 text-sm"><Activity size={16} className="text-red-500" /> Historical 12-Lead Record</h3>
                             </div>
                             <div className="flex-1 relative p-1">
-                                {/* Reusing ECGCanvas, assuming normal rank/pattern for historical case unless we store pattern in case data */}
-                                <ECGCanvas activeGroupRank={caseData.groupRank || 1} />
+                                {/* Reusing ECGCanvas with real leads if available */}
+                                <ECGCanvas
+                                    activeGroupRank={caseData.groupRank || 1}
+                                    signalData={caseData.previewSignal}
+                                    leads={detailedCase?.leads}
+                                />
                             </div>
                         </div>
 

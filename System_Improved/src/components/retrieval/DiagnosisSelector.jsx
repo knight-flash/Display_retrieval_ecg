@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { ChevronDown, CheckCircle2 } from 'lucide-react';
 import ConfidenceBadge from '../common/ConfidenceBadge';
-import { diagnosticGroups } from '../../data/mockMetadata'; // Import groups directly or pass as props
 
-const DiagnosisSelector = ({ activeGroup, onChange }) => {
+const DiagnosisSelector = ({ activeGroup, onChange, groups = [] }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     return (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-3 shrink-0 relative z-30">
             <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-bold text-slate-400 uppercase">Selected Diagnosis Candidate</span>
-                <ConfidenceBadge level={activeGroup.confidence} />
+                <ConfidenceBadge level={activeGroup?.confidence || "Low"} />
             </div>
 
             <button
@@ -19,9 +18,9 @@ const DiagnosisSelector = ({ activeGroup, onChange }) => {
             >
                 <div className="flex flex-col items-start">
                     <div className="text-blue-800 font-bold text-lg flex items-center gap-2">
-                        {activeGroup.name}
+                        {activeGroup?.name || "Select Diagnosis"}
                     </div>
-                    <div className="text-xs text-blue-500 font-medium mt-0.5">Score: {activeGroup.score.toFixed(2)} • {activeGroup.supportCount} Supporting Cases</div>
+                    <div className="text-xs text-blue-500 font-medium mt-0.5">Score: {(activeGroup?.score || 0).toFixed(2)} • {activeGroup?.supportCount || 0} Supporting Cases</div>
                 </div>
                 <ChevronDown size={20} className={`text-blue-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180 text-blue-600' : 'group-hover:text-blue-600'}`} />
             </button>
@@ -34,14 +33,14 @@ const DiagnosisSelector = ({ activeGroup, onChange }) => {
                         <span>Relevance Score</span>
                     </div>
                     <div className="max-h-64 overflow-y-auto custom-scrollbar">
-                        {diagnosticGroups.map((group) => (
+                        {groups.map((group) => (
                             <button
                                 key={group.rank}
                                 onClick={() => {
                                     onChange(group);
                                     setIsDropdownOpen(false);
                                 }}
-                                className={`w-full text-left p-3 hover:bg-slate-50 flex justify-between items-center border-b border-slate-50 last:border-0 transition-colors ${activeGroup.rank === group.rank ? 'bg-blue-50/50' : ''}`}
+                                className={`w-full text-left p-3 hover:bg-slate-50 flex justify-between items-center border-b border-slate-50 last:border-0 transition-colors ${activeGroup?.rank === group.rank ? 'bg-blue-50/50' : ''}`}
                             >
                                 <div className="flex items-center gap-3">
                                     <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${activeGroup.rank === group.rank ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}`}>

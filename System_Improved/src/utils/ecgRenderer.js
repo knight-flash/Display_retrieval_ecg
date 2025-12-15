@@ -34,3 +34,39 @@ export const generateECGPath = (points, amplitude, type = "normal", seed = 0, ac
     }
     return path;
 };
+
+/**
+ * Converts an array of numerical data into an SVG path string.
+ * auto-scales the data to fit within the provided height (amplitude * 2 ideally).
+ */
+export const dataToPath = (data, width, height, scale = 20) => {
+    if (!data || data.length === 0) return "";
+
+    // 1. Determine Scale
+    // Assuming data is roughly -1.0 to 1.0 or similar.
+    // We want to center it at height/2.
+    // And scale it so peaks don't clip.
+    const baseline = height / 2;
+
+    // Scale factor: If typical signal is 1.0 peak, and we have 40px height.
+    // 1 unit = 10px? 
+    // Let's normalize loosely.
+    const yScale = scale; // Custom scale
+
+    // X Scale: Fit data length to width? Or fixed step?
+    // "Scrolling" implies fixed step.
+    const xStep = width / data.length;
+    // Wait, typically we want it to look like ECG, not squashed.
+    // Let's use a fixed xStep if distinct, or stretch if we want 'preview'.
+    // The previous code used 500 width.
+
+    let path = `M 0 ${baseline} `;
+
+    data.forEach((val, index) => {
+        const x = index * (width / data.length); // Stretch to fit width
+        const y = baseline - (val * yScale); // Invert Y because SVG Y is down
+        path += `L ${x.toFixed(1)} ${y.toFixed(1)} `;
+    });
+
+    return path;
+};

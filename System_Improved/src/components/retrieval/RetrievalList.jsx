@@ -3,12 +3,12 @@ import { AlertCircle } from 'lucide-react';
 import DiagnosisSelector from './DiagnosisSelector';
 import RetrievalCard from './RetrievalCard';
 
-const RetrievalList = ({ activeGroup, onGroupChange, cases, onSelectCase }) => {
+const RetrievalList = ({ activeGroup, onGroupChange, cases, onSelectCase, groups }) => {
     return (
         <div className="col-span-5 flex flex-col h-full min-h-0 gap-3">
 
             {/* Selector */}
-            <DiagnosisSelector activeGroup={activeGroup} onChange={onGroupChange} />
+            <DiagnosisSelector activeGroup={activeGroup} onChange={onGroupChange} groups={groups} />
 
             {/* List Container */}
             <div className="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
