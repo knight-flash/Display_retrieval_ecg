@@ -43,17 +43,15 @@ const DiagnosisSelector = ({ activeGroup, onChange, groups = [] }) => {
                                 className={`w-full text-left p-3 hover:bg-slate-50 flex justify-between items-center border-b border-slate-50 last:border-0 transition-colors ${activeGroup?.rank === group.rank ? 'bg-blue-50/50' : ''}`}
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${activeGroup.rank === group.rank ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                                        {group.rank}
-                                    </div>
+                                    <div className={`w-3 h-3 rounded-full shrink-0 ${activeGroup?.rank === group.rank ? 'bg-blue-600' : 'bg-slate-300'}`} />
                                     <div>
-                                        <div className={`font-bold text-sm ${activeGroup.rank === group.rank ? 'text-blue-700' : 'text-slate-700'}`}>{group.name}</div>
+                                        <div className={`font-bold text-sm ${activeGroup?.rank === group.rank ? 'text-blue-700' : 'text-slate-700'}`}>{group.name}</div>
                                         <div className="text-xs text-slate-400">{group.supportCount} cases found</div>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <span className="font-mono text-sm font-medium text-slate-600">{group.score.toFixed(2)}</span>
-                                    {activeGroup.rank === group.rank && <CheckCircle2 size={16} className="text-blue-600" />}
+                                    {activeGroup?.rank === group.rank && <CheckCircle2 size={16} className="text-blue-600" />}
                                 </div>
                             </button>
                         ))}

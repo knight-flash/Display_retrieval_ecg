@@ -3,9 +3,9 @@ import { AlertCircle } from 'lucide-react';
 import DiagnosisSelector from './DiagnosisSelector';
 import RetrievalCard from './RetrievalCard';
 
-const RetrievalList = ({ activeGroup, onGroupChange, cases, onSelectCase, groups }) => {
+const RetrievalList = ({ activeGroup, onGroupChange, cases, onSelectCase, groups, className }) => {
     return (
-        <div className="col-span-5 flex flex-col h-full min-h-0 gap-3">
+        <div className={`flex flex-col h-full min-h-0 gap-3 ${className || ''}`}>
 
             {/* Selector */}
             <DiagnosisSelector activeGroup={activeGroup} onChange={onGroupChange} groups={groups} />

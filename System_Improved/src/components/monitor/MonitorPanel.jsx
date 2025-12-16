@@ -27,13 +27,13 @@ const MonitorPanel = ({ activeGroup, detailedCase, displayCase }) => {
                         Live 12-Lead Monitor {displayCase ? `• ${displayCase.id} ` : ''}
                     </span>
                     <div className="flex items-center gap-2">
-                        {activeGroup.rank === 2 && <span className="text-[10px] text-amber-600 font-bold bg-amber-100 px-1.5 rounded">Flutter Waves Detected</span>}
+                        {activeGroup?.rank === 2 && <span className="text-[10px] text-amber-600 font-bold bg-amber-100 px-1.5 rounded">Flutter Waves Detected</span>}
                         <span className="text-[10px] font-mono text-slate-400">25mm/s • 10mm/mV • 100Hz</span>
                     </div>
                 </div>
                 <div className="flex-1 relative overflow-hidden">
                     <ECGCanvas
-                        activeGroupRank={activeGroup.rank}
+                        activeGroupRank={activeGroup?.rank}
                         leads={detailedCase?.leads}
                         signalData={displayCase?.previewSignal}
                     />

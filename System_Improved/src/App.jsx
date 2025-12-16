@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 
 // Data
 import { generateMetadata } from './data/mockMetadata';
-import rawCases from './data/database/index.json';
+// Removed static index.json import to support dynamic multi-patient loading
 
 // Layout
 import Sidebar from './components/layout/Sidebar';
@@ -12,10 +12,18 @@ import Header from './components/layout/Header';
 import MonitorPanel from './components/monitor/MonitorPanel';
 import RetrievalList from './components/retrieval/RetrievalList';
 import CaseDetailModal from './components/modal/CaseDetailModal';
+import DiagnosisWriter from './components/diagnosis/DiagnosisWriter';
 
 function App() {
+  // 0. State for Multi-Patient Workflow
+  const [patientManifest, setPatientManifest] = useState([]);
+  const [currentPatientIndex, setCurrentPatientIndex] = useState(0);
+  const [rawCases, setRawCases] = useState([]); // Dynamic loaded cases for current patient
+
   // 1. Pre-process cases to fix data issues globally (Memoized first)
   const allCases = useMemo(() => {
+    if (!rawCases || rawCases.length === 0) return [];
+
     return rawCases.map(c => {
       // 1. Fix diagnosis format (handle pipe string vs array)
       let diagArray = [];
@@ -44,10 +52,13 @@ function App() {
         demographics: c.demographics || "None provided"
       };
     });
-  }, []);
+  }, [rawCases]); // Depend on dynamic rawCases
 
   // 2. Dynamically Generate Metadata based on actual processed cases
-  const dynamicGroups = useMemo(() => generateMetadata(allCases), [allCases]);
+  // FIX: Exclude query case from metadata generation logic so counts match the visible retrieval list
+  // The query case is shown in the Monitor, not the Retrieval List.
+  const validRetrievalCases = useMemo(() => allCases.filter(c => !c.isQueryCase), [allCases]);
+  const dynamicGroups = useMemo(() => generateMetadata(validRetrievalCases), [validRetrievalCases]);
 
   // State
   // Initialize with the first generated group or null
@@ -74,15 +85,91 @@ function App() {
   // 3. Dynamic Case Loading
   // Vite's import.meta.glob returns an object where keys are the relative paths from this file
   const caseModules = useMemo(() => import.meta.glob('./data/database/cases/*.json'), []);
-  const [detailedCase, setDetailedCase] = useState(null);
+  const retrievalModules = useMemo(() => import.meta.glob('./data/database/retrievals/*.json'), []);
+  const manifestModules = useMemo(() => import.meta.glob('./data/database/manifest.json'), []);
 
-  // Determine the case to display on the monitor:
-  // Priority: 1. User Selected Case (Click) -> 2. Query Case (Default) -> 3. First Result (Fallback)
-  const currentMonitorCase = selectedCase || queryCase || (filteredCases.length > 0 ? filteredCases[0] : null);
+  // 4. Case Loading Logic
+  // Split into two states:
+  // - patientData: The main case being analyzed (Monitor Panel) - FIXED
+  // - selectedResultData: The retrieved case being viewed (Modal) - DYNAMIC
 
-  // Function 1: Load detailed data when a case is CLICKED (User Action)
+  const [patientData, setPatientData] = useState(null);       // For Monitor
+  const [selectedResultData, setSelectedResultData] = useState(null); // For Modal
+
+  // NEW: Load Manifest on Mount
   React.useEffect(() => {
-    if (!selectedCase) return; // Only process if user explicitly selected something
+    const loadManifest = async () => {
+      try {
+        // Find manifest module
+        const path = Object.keys(manifestModules)[0]; // Should be only one
+        if (path) {
+          const mod = await manifestModules[path]();
+          const manifest = mod.default || mod;
+          if (Array.isArray(manifest) && manifest.length > 0) {
+            setPatientManifest(manifest);
+            setCurrentPatientIndex(0);
+            // Also need to trigger load of first patient? 
+            // The next Effect on [currentPatientIndex, patientManifest] will handle it.
+          }
+        } else {
+          console.warn("Manifest not found. Please run datajson.py");
+        }
+      } catch (e) {
+        console.error("Error loading manifest:", e);
+      }
+    };
+    loadManifest();
+  }, [manifestModules]);
+
+  // NEW: Load Retrieval Data when Patient Changes
+  React.useEffect(() => {
+    if (patientManifest.length === 0) return;
+
+    const currentPatient = patientManifest[currentPatientIndex];
+    if (!currentPatient) return;
+
+    const loadRetrieval = async () => {
+      try {
+        // Construct path key: ./data/database/retrievals/retrieval_{id}.json
+        // Accessing retrievedFile property from manifest is safer if available
+        // manifest item: { id, retrievalFile, ... } where retrievalFile is relative "retrievals/..."
+
+        // We need to match the glob key. Glob keys are like "./data/database/retrievals/retrieval_de_123...json"
+        const targetKey = `./data/database/${currentPatient.retrievalFile}`;
+
+        // Try to find exact match
+        let modulePath = Object.keys(retrievalModules).find(k => k === targetKey);
+
+        // Fallback lookup
+        if (!modulePath) {
+          modulePath = Object.keys(retrievalModules).find(k => k.includes(currentPatient.id));
+        }
+
+        if (modulePath) {
+          const mod = await retrievalModules[modulePath]();
+          setRawCases(mod.default || mod);
+          // Reset selections when patient changes
+          setSelectedCase(null);
+          setActiveGroupId(null);
+          // Monitor data initialization will happen in separate effect below
+        } else {
+          console.error("Retrieval file not found for:", currentPatient.id);
+        }
+
+      } catch (e) {
+        console.error("Error loading retrieval data:", e);
+      }
+    };
+
+    loadRetrieval();
+  }, [currentPatientIndex, patientManifest, retrievalModules]);
+
+  // Function 1: Load detailed data when a case is CLICKED (User Action) -> Updates Modal Data
+  React.useEffect(() => {
+    if (!selectedCase) {
+      setSelectedResultData(null);
+      return;
+    }
 
     const loadCaseData = async () => {
       try {
@@ -91,31 +178,27 @@ function App() {
 
         if (modulePath) {
           const mod = await caseModules[modulePath]();
-          setDetailedCase(mod.default || mod);
-        } else {
-          console.error(`Case file not found for: ${targetFilename}`);
-          setDetailedCase(null);
+          setSelectedResultData(mod.default || mod);
         }
       } catch (err) {
-        console.error("Error loading case details:", err);
-        setDetailedCase(null);
+        console.error("Error loading selected case details:", err);
       }
     };
 
     loadCaseData();
   }, [selectedCase, caseModules]);
 
-  // Function 2: Initialize Monitor on Startup (Defaults to Query Case)
+  // Function 2: Initialize Monitor on Startup -> Updates Patient Data (Permanently)
   React.useEffect(() => {
-    // Only initialize if NO case is selected yet
-    if (selectedCase) return;
-
     const initializeMonitor = async () => {
       try {
         // Default to the Query Case, or fallback to first result
-        const targetCase = queryCase || filteredCases[0];
+        const targetCase = queryCase || (allCases.length > 0 ? allCases[0] : null);
 
         if (!targetCase) return;
+
+        // Don't reload if we already have it
+        if (patientData && patientData.id === targetCase.id) return;
 
         console.log("Initializing Monitor with default case:", targetCase.id);
 
@@ -124,8 +207,7 @@ function App() {
 
         if (modulePath) {
           const mod = await caseModules[modulePath]();
-          // We set detailedCase directly, effectively "auto-selecting" it for viewing without changing selectedCase state
-          setDetailedCase(mod.default || mod);
+          setPatientData(mod.default || mod);
         }
       } catch (err) {
         console.error("Error initializing monitor:", err);
@@ -133,7 +215,7 @@ function App() {
     };
 
     initializeMonitor();
-  }, [selectedCase, queryCase, filteredCases, caseModules]);
+  }, [queryCase, allCases, caseModules]); // Removed selectedCase dependency, this run once (or when query changes)
 
   return (
     <div className="flex h-screen bg-slate-100 font-sans text-slate-800 overflow-hidden selection:bg-blue-100">
@@ -145,7 +227,14 @@ function App() {
       <div className="flex-1 flex flex-col min-w-0">
 
         {/* Header */}
-        <Header />
+        <Header
+          doctorName="Dr. Yan"
+          version="BETA v3.0"
+          onPrevPatient={() => setCurrentPatientIndex(prev => Math.max(0, prev - 1))}
+          onNextPatient={() => setCurrentPatientIndex(prev => Math.min(patientManifest.length - 1, prev + 1))}
+          currentPatientIndex={currentPatientIndex}
+          totalPatients={patientManifest.length}
+        />
 
         {/* Workspace Grid */}
         <main className="flex-1 p-4 grid grid-cols-12 gap-4 overflow-hidden">
@@ -154,18 +243,29 @@ function App() {
           {/* Pass displayCase so we can show previewSignal while detailedCase is loading or if no case is selected */}
           <MonitorPanel
             activeGroup={activeGroup}
-            detailedCase={detailedCase}
-            displayCase={currentMonitorCase}
+            detailedCase={patientData}
+            displayCase={queryCase || (allCases.length > 0 ? allCases[0] : null)}
           />
 
-          {/* RIGHT: Retrieval Panel (Diagnosis + Evidence List) */}
-          <RetrievalList
-            activeGroup={activeGroup} // Pass current selected group
-            groups={dynamicGroups}    // Pass all groups for selector
-            onGroupChange={(g) => setActiveGroupId(g.rank)}
-            cases={filteredCases}
-            onSelectCase={setSelectedCase}
-          />
+          {/* RIGHT: Retrieval Panel + Diagnosis Writer */}
+          <div className="col-span-5 flex flex-col gap-4 h-full overflow-hidden">
+
+            {/* Retrieval List (Flexible Height) */}
+            <RetrievalList
+              className="flex-1"
+              activeGroup={activeGroup} // Pass current selected group
+              groups={dynamicGroups}    // Pass all groups for selector
+              onGroupChange={(g) => setActiveGroupId(g.rank)}
+              cases={filteredCases}
+              onSelectCase={setSelectedCase}
+            />
+
+            {/* Diagnosis Writer (Fixed Height ~1/5) */}
+            <div className="h-48 shrink-0">
+              <DiagnosisWriter caseId={queryCase?.id} />
+            </div>
+
+          </div>
 
         </main>
       </div>
@@ -173,7 +273,7 @@ function App() {
       {/* 3. Modal Layer */}
       <CaseDetailModal
         caseData={selectedCase}
-        detailedCase={detailedCase}
+        detailedCase={selectedResultData}
         onClose={() => setSelectedCase(null)}
       />
 

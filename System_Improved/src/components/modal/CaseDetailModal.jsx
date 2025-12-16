@@ -62,10 +62,38 @@ const CaseDetailModal = ({ caseData, detailedCase, onClose }) => {
                             </div>
                         </div>
 
+
                         {/* BOTTOM LEFT: Report */}
                         <div className="col-span-5 bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col">
-                            <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2 border-b border-slate-100 pb-2">
-                                <FileText size={18} className="text-blue-500" /> Physician Report
+
+                            {/* New: Standardized Diagnosis Section */}
+                            {(caseData.cleanName || caseData.medicalCategory) && (
+                                <div className="mb-4 pb-4 border-b border-slate-100">
+                                    <h3 className="font-bold text-slate-800 mb-2 flex items-center gap-2 text-sm">
+                                        <CheckCircle2 size={16} className="text-green-600" /> Standardized Diagnosis
+                                    </h3>
+                                    <div className="bg-slate-50 rounded-lg p-3 border border-slate-100">
+                                        <div className="font-bold text-slate-900 text-lg leading-tight mb-1">
+                                            {caseData.cleanName || "Uncategorized"}
+                                        </div>
+                                        <div className="flex gap-2 mt-2">
+                                            {caseData.medicalCategory && (
+                                                <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded textxs font-bold uppercase tracking-wider text-[10px]">
+                                                    {caseData.medicalCategory}
+                                                </span>
+                                            )}
+                                            {caseData.medicalGroup && caseData.medicalGroup !== caseData.medicalCategory && (
+                                                <span className="bg-slate-200 text-slate-600 px-2 py-0.5 rounded textxs font-bold uppercase tracking-wider text-[10px]">
+                                                    {caseData.medicalGroup}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2 text-sm">
+                                <FileText size={16} className="text-blue-500" /> Raw Physician Report
                             </h3>
                             <div className="mb-4 flex flex-wrap gap-2">
                                 {caseData.diagnosis.map((tag, i) => (
