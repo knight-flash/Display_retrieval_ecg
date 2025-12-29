@@ -4,9 +4,9 @@ import RetrievalCard from '../retrieval/RetrievalCard'; // Direct use to avoid R
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 
 // Load case files dynamically to fetch full signal data on demand
-const caseModules = import.meta.glob('../../data/database/cases/*.json');
+const caseModules = import.meta.glob('../../data/database2/cases/*.json');
 
-const DiverseView = ({ queryCase, diverseCases }) => {
+const DiverseView = ({ queryCase, diverseCases, viewMode = 'variations' }) => {
     // State to track which diverse case is "Selected" for comparison
     const [selectedCase, setSelectedCase] = useState(null);
     const [fullSelectedCase, setFullSelectedCase] = useState(null);
@@ -72,6 +72,13 @@ const DiverseView = ({ queryCase, diverseCases }) => {
                         <span className="bg-blue-200 text-blue-700 text-xs px-2 py-0.5 rounded uppercase tracking-wider">Prototype</span>
                         Reference Case
                     </h3>
+                    <div className="flex gap-1">
+                        {queryCase?.diagnosis?.map((d, i) => (
+                            <span key={i} className="px-1.5 py-0.5 bg-white text-blue-700 text-[10px] font-semibold rounded border border-blue-100 shadow-sm">
+                                {d}
+                            </span>
+                        ))}
+                    </div>
                 </div>
                 <div className="flex-1 relative p-2">
                     <MonitorPanel
@@ -86,8 +93,10 @@ const DiverseView = ({ queryCase, diverseCases }) => {
             <div className="flex-1 flex flex-col min-w-0 border-r border-slate-200 bg-white">
                 <div className="bg-white px-4 py-3 border-b border-slate-100 flex justify-between items-center shrink-0 h-14">
                     <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                        <span className="bg-purple-100 text-purple-700 text-xs px-2 py-0.5 rounded uppercase tracking-wider">Variation</span>
-                        Selected Manifestation
+                        <span className="bg-purple-100 text-purple-700 text-xs px-2 py-0.5 rounded uppercase tracking-wider">
+                            {viewMode === 'candidates' ? 'Candidate' : 'Variation'}
+                        </span>
+                        {viewMode === 'candidates' ? 'Selected Match' : 'Selected Manifestation'}
                     </h3>
                     {selectedCase && (
                         <span className="text-xs font-mono text-slate-400">
@@ -128,24 +137,28 @@ const DiverseView = ({ queryCase, diverseCases }) => {
             <div className="w-80 flex flex-col bg-white shrink-0 border-l border-slate-200 shadow-xl z-10">
                 {/* Fixed Diagnosis Header - No Selection needed as per user request */}
                 <div className="p-4 border-b border-slate-100 bg-slate-50">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase mb-2 tracking-wider">Target Diagnosis</h4>
+                    <h4 className="text-xs font-bold text-slate-400 uppercase mb-2 tracking-wider">
+                        {selectedCase ? 'Selected Diagnosis' : 'Target Diagnosis'}
+                    </h4>
                     <div className="bg-white border border-blue-200 rounded-lg p-3 shadow-sm">
                         <div className="font-bold text-blue-700 text-sm leading-tight flex flex-wrap gap-1">
-                            {queryCase?.diagnosis?.map((d, i) => (
+                            {(selectedCase?.diagnosis || queryCase?.diagnosis)?.map((d, i) => (
                                 <span key={i} className="px-1.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-semibold rounded border border-blue-100">
                                     {d}
                                 </span>
                             )) || "Unknown Diagnosis"}
                         </div>
                         <div className="text-[10px] text-slate-400 mt-2 uppercase tracking-wider">
-                            Same Disease • Semantic Contrast
+                            {selectedCase ? 'From Retrieved Case' : 'From Query Case'}
                         </div>
                     </div>
                 </div>
 
                 {/* List Header */}
                 <div className="px-4 py-2 bg-slate-50/50 border-b border-slate-100 flex justify-between items-center">
-                    <span className="text-xs font-bold text-slate-500 uppercase">Variations ({diverseCases.length})</span>
+                    <span className="text-xs font-bold text-slate-500 uppercase">
+                        {viewMode === 'candidates' ? 'Candidates' : 'Variations'} ({diverseCases.length})
+                    </span>
                 </div>
 
                 {/* Scrollable List */}

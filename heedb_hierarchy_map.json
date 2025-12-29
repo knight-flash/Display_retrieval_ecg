@@ -1,0 +1,752 @@
+{
+  "abnormal ecg": {
+    "level": 1,
+    "category": "Global",
+    "group_id": "global_abnormal",
+    "clean_name": "abnormal ecg"
+  },
+  "normal sinus rhythm": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "sinus_normal",
+    "clean_name": "normal sinus rhythm"
+  },
+  "normal ecg": {
+    "level": 1,
+    "category": "Global",
+    "group_id": "global_normal",
+    "clean_name": "normal ecg"
+  },
+  "sinus bradycardia": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "sinus_brady",
+    "clean_name": "sinus bradycardia"
+  },
+  "otherwise normal ecg": {
+    "level": 1,
+    "category": "Global",
+    "group_id": "global_normal",
+    "clean_name": "otherwise normal ecg"
+  },
+  "sinus tachycardia": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "sinus_tachy",
+    "clean_name": "sinus tachycardia"
+  },
+  "sinus rhythm": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "sinus_normal",
+    "clean_name": "sinus rhythm"
+  },
+  "left axis deviation": {
+    "level": 3,
+    "category": "Other",
+    "group_id": "axis_deviation",
+    "clean_name": "left axis deviation"
+  },
+  "atrial fibrillation": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "atrial_fib_flutter",
+    "clean_name": "atrial fibrillation"
+  },
+  "borderline ecg": {
+    "level": 1,
+    "category": "Global",
+    "group_id": "global_abnormal",
+    "clean_name": "borderline ecg"
+  },
+  "left atrial enlargement": {
+    "level": 3,
+    "category": "Hypertrophy",
+    "group_id": "lae",
+    "clean_name": "left atrial enlargement"
+  },
+  "right bundle branch block": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "rbbb",
+    "clean_name": "right bundle branch block"
+  },
+  "low voltage qrs": {
+    "level": 3,
+    "category": "Other",
+    "group_id": "waveform_features",
+    "clean_name": "low voltage qrs"
+  },
+  "premature ventricular complexes": {
+    "level": 3,
+    "category": "Ectopic",
+    "group_id": "pvc",
+    "clean_name": "premature ventricular complexes"
+  },
+  "septal infarct": {
+    "level": 3,
+    "category": "Ischemia/Infarct",
+    "group_id": "infarct_anterior_septal",
+    "clean_name": "septal infarct"
+  },
+  "nonspecific t wave abnormality": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_nonspecific t wave abnormality",
+    "clean_name": "nonspecific t wave abnormality"
+  },
+  "incomplete right bundle branch block": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "rbbb",
+    "clean_name": "incomplete right bundle branch block"
+  },
+  "premature atrial complexes": {
+    "level": 3,
+    "category": "Ectopic",
+    "group_id": "pac",
+    "clean_name": "premature atrial complexes"
+  },
+  "anterior infarct": {
+    "level": 3,
+    "category": "Ischemia/Infarct",
+    "group_id": "infarct_anterior_septal",
+    "clean_name": "anterior infarct"
+  },
+  "left ventricular hypertrophy": {
+    "level": 3,
+    "category": "Hypertrophy",
+    "group_id": "lvh",
+    "clean_name": "left ventricular hypertrophy"
+  },
+  "left bundle branch block": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "lbbb",
+    "clean_name": "left bundle branch block"
+  },
+  "nonspecific st abnormality": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_nonspecific st abnormality",
+    "clean_name": "nonspecific st abnormality"
+  },
+  "with rapid ventricular response": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_with rapid ventricular response",
+    "clean_name": "with rapid ventricular response"
+  },
+  "marked sinus bradycardia": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "sinus_brady",
+    "clean_name": "marked sinus bradycardia"
+  },
+  "premature supraventricular complexes": {
+    "level": 3,
+    "category": "Ectopic",
+    "group_id": "pvc",
+    "clean_name": "premature supraventricular complexes"
+  },
+  "lateral infarct": {
+    "level": 3,
+    "category": "Ischemia/Infarct",
+    "group_id": "infarct_lateral",
+    "clean_name": "lateral infarct"
+  },
+  "with sinus arrhythmia": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "sinus_arrhythmia",
+    "clean_name": "with sinus arrhythmia"
+  },
+  "nonspecific st and t wave abnormality": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_nonspecific st and t wave abnormality",
+    "clean_name": "nonspecific st and t wave abnormality"
+  },
+  "undetermined rhythm": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_undetermined rhythm",
+    "clean_name": "undetermined rhythm"
+  },
+  "right axis deviation": {
+    "level": 3,
+    "category": "Other",
+    "group_id": "axis_deviation",
+    "clean_name": "right axis deviation"
+  },
+  "left anterior fascicular block": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "fascicular_block",
+    "clean_name": "left anterior fascicular block"
+  },
+  "with short pr": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_with short pr",
+    "clean_name": "with short pr"
+  },
+  "with marked sinus arrhythmia": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "sinus_arrhythmia",
+    "clean_name": "with marked sinus arrhythmia"
+  },
+  "fusion complexes": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_fusion complexes",
+    "clean_name": "fusion complexes"
+  },
+  "anteroseptal infarct": {
+    "level": 3,
+    "category": "Ischemia/Infarct",
+    "group_id": "infarct_anterior_septal",
+    "clean_name": "anteroseptal infarct"
+  },
+  "rightward axis": {
+    "level": 3,
+    "category": "Other",
+    "group_id": "axis_deviation",
+    "clean_name": "rightward axis"
+  },
+  "atrial flutter": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "atrial_fib_flutter",
+    "clean_name": "atrial flutter"
+  },
+  "with repolarization abnormality": {
+    "level": 3,
+    "category": "Other",
+    "group_id": "waveform_features",
+    "clean_name": "with repolarization abnormality"
+  },
+  "rsr' or qr pattern in v1 suggests right ventricular conduction delay": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "conduction_general",
+    "clean_name": "rsr' or qr pattern in v1 suggests right ventricular conduction delay"
+  },
+  "with premature ventricular or aberrantly conducted complexes": {
+    "level": 3,
+    "category": "Ectopic",
+    "group_id": "pvc",
+    "clean_name": "with premature ventricular or aberrantly conducted complexes"
+  },
+  "or digitalis effect": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_or digitalis effect",
+    "clean_name": "or digitalis effect"
+  },
+  "anterolateral infarct": {
+    "level": 3,
+    "category": "Ischemia/Infarct",
+    "group_id": "infarct_lateral",
+    "clean_name": "anterolateral infarct"
+  },
+  "voltage criteria for left ventricular hypertrophy": {
+    "level": 3,
+    "category": "Hypertrophy",
+    "group_id": "lvh",
+    "clean_name": "voltage criteria for left ventricular hypertrophy"
+  },
+  "ectopic atrial rhythm": {
+    "level": 3,
+    "category": "Ectopic",
+    "group_id": "pac",
+    "clean_name": "ectopic atrial rhythm"
+  },
+  "right atrial enlargement": {
+    "level": 3,
+    "category": "Hypertrophy",
+    "group_id": "rvh_rae",
+    "clean_name": "right atrial enlargement"
+  },
+  "bifascicular block": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "fascicular_block",
+    "clean_name": "bifascicular block"
+  },
+  "electronic atrial pacemaker": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "pacemaker",
+    "clean_name": "electronic atrial pacemaker"
+  },
+  "with slow ventricular response": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_with slow ventricular response",
+    "clean_name": "with slow ventricular response"
+  },
+  "electronic ventricular pacemaker": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "pacemaker",
+    "clean_name": "electronic ventricular pacemaker"
+  },
+  "aberrant conduction": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_aberrant conduction",
+    "clean_name": "aberrant conduction"
+  },
+  "junctional rhythm": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_junctional rhythm",
+    "clean_name": "junctional rhythm"
+  },
+  "incomplete left bundle branch block": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "lbbb",
+    "clean_name": "incomplete left bundle branch block"
+  },
+  "inferior infarct": {
+    "level": 3,
+    "category": "Ischemia/Infarct",
+    "group_id": "infarct_inferior",
+    "clean_name": "inferior infarct"
+  },
+  "wide qrs rhythm": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_wide qrs rhythm",
+    "clean_name": "wide qrs rhythm"
+  },
+  "with qrs widening": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_with qrs widening",
+    "clean_name": "with qrs widening"
+  },
+  "with a competing junctional pacemaker": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "pacemaker",
+    "clean_name": "with a competing junctional pacemaker"
+  },
+  "premature ectopic complexes": {
+    "level": 3,
+    "category": "Ectopic",
+    "group_id": "ectopic_general",
+    "clean_name": "premature ectopic complexes"
+  },
+  "biatrial enlargement": {
+    "level": 3,
+    "category": "Hypertrophy",
+    "group_id": "hypertrophy_general",
+    "clean_name": "biatrial enlargement"
+  },
+  "left posterior fascicular block": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "fascicular_block",
+    "clean_name": "left posterior fascicular block"
+  },
+  "av sequential or dual chamber electronic pacemaker": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "pacemaker",
+    "clean_name": "av sequential or dual chamber electronic pacemaker"
+  },
+  "with qrs widening and repolarization abnormality": {
+    "level": 3,
+    "category": "Other",
+    "group_id": "waveform_features",
+    "clean_name": "with qrs widening and repolarization abnormality"
+  },
+  "right superior axis deviation": {
+    "level": 3,
+    "category": "Other",
+    "group_id": "axis_deviation",
+    "clean_name": "right superior axis deviation"
+  },
+  "prolonged qt": {
+    "level": 3,
+    "category": "Other",
+    "group_id": "waveform_features",
+    "clean_name": "prolonged qt"
+  },
+  "right ventricular hypertrophy": {
+    "level": 3,
+    "category": "Hypertrophy",
+    "group_id": "rvh_rae",
+    "clean_name": "right ventricular hypertrophy"
+  },
+  "pulmonary disease pattern": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_pulmonary disease pattern",
+    "clean_name": "pulmonary disease pattern"
+  },
+  "with 1st degree av block": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "av_block",
+    "clean_name": "with 1st degree av block"
+  },
+  "ventricular-paced rhythm": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "pacemaker",
+    "clean_name": "ventricular-paced rhythm"
+  },
+  "nonspecific intraventricular conduction delay": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "conduction_general",
+    "clean_name": "nonspecific intraventricular conduction delay"
+  },
+  "atrial-paced rhythm": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "pacemaker",
+    "clean_name": "atrial-paced rhythm"
+  },
+  "inferior-posterior infarct": {
+    "level": 3,
+    "category": "Ischemia/Infarct",
+    "group_id": "infarct_inferior",
+    "clean_name": "inferior-posterior infarct"
+  },
+  "with prolonged av conduction": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_with prolonged av conduction",
+    "clean_name": "with prolonged av conduction"
+  },
+  "atrial-sensed ventricular-paced rhythm": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "pacemaker",
+    "clean_name": "atrial-sensed ventricular-paced rhythm"
+  },
+  "in a pattern of bigeminy": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_in a pattern of bigeminy",
+    "clean_name": "in a pattern of bigeminy"
+  },
+  "acute mi / stemi": {
+    "level": 3,
+    "category": "Ischemia/Infarct",
+    "group_id": "infarct_general",
+    "clean_name": "acute mi / stemi"
+  },
+  "premature ventricular and fusion complexes": {
+    "level": 3,
+    "category": "Ectopic",
+    "group_id": "pvc",
+    "clean_name": "premature ventricular and fusion complexes"
+  },
+  "av dual-paced rhythm": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "pacemaker",
+    "clean_name": "av dual-paced rhythm"
+  },
+  "supraventricular tachycardia": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_supraventricular tachycardia",
+    "clean_name": "supraventricular tachycardia"
+  },
+  "early repolarization": {
+    "level": 3,
+    "category": "Other",
+    "group_id": "waveform_features",
+    "clean_name": "early repolarization"
+  },
+  "ventricular-paced complexes": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "pacemaker",
+    "clean_name": "ventricular-paced complexes"
+  },
+  "lateral injury pattern": {
+    "level": 3,
+    "category": "Ischemia/Infarct",
+    "group_id": "infarct_lateral",
+    "clean_name": "lateral injury pattern"
+  },
+  "leftward axis": {
+    "level": 3,
+    "category": "Other",
+    "group_id": "axis_deviation",
+    "clean_name": "leftward axis"
+  },
+  "wide qrs tachycardia": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_wide qrs tachycardia",
+    "clean_name": "wide qrs tachycardia"
+  },
+  "inferior injury pattern": {
+    "level": 3,
+    "category": "Ischemia/Infarct",
+    "group_id": "infarct_inferior",
+    "clean_name": "inferior injury pattern"
+  },
+  "masked by fascicular block": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "fascicular_block",
+    "clean_name": "masked by fascicular block"
+  },
+  "with undetermined rhythm irregularity": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_with undetermined rhythm irregularity",
+    "clean_name": "with undetermined rhythm irregularity"
+  },
+  "pediatric ecg analysis": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_pediatric ecg analysis",
+    "clean_name": "pediatric ecg analysis"
+  },
+  "consider right ventricular involvement in acute inferior infarct": {
+    "level": 3,
+    "category": "Ischemia/Infarct",
+    "group_id": "infarct_inferior",
+    "clean_name": "consider right ventricular involvement in acute inferior infarct"
+  },
+  "biventricular pacemaker detected": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "pacemaker",
+    "clean_name": "biventricular pacemaker detected"
+  },
+  "abnormal left axis deviation": {
+    "level": 3,
+    "category": "Other",
+    "group_id": "axis_deviation",
+    "clean_name": "abnormal left axis deviation"
+  },
+  "no p-waves found": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_no p-waves found",
+    "clean_name": "no p-waves found"
+  },
+  "blocked": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "conduction_general",
+    "clean_name": "blocked"
+  },
+  "nonspecific intraventricular block": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "conduction_general",
+    "clean_name": "nonspecific intraventricular block"
+  },
+  "suspect unspecified pacemaker failure": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "pacemaker",
+    "clean_name": "suspect unspecified pacemaker failure"
+  },
+  "with ventricular escape complexes": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_with ventricular escape complexes",
+    "clean_name": "with ventricular escape complexes"
+  },
+  "with 2nd degree sa block mobitz i": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "conduction_general",
+    "clean_name": "with 2nd degree sa block mobitz i"
+  },
+  "acute mi": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_acute mi",
+    "clean_name": "acute mi"
+  },
+  "anterior injury pattern": {
+    "level": 3,
+    "category": "Ischemia/Infarct",
+    "group_id": "infarct_anterior_septal",
+    "clean_name": "anterior injury pattern"
+  },
+  "with retrograde conduction": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_with retrograde conduction",
+    "clean_name": "with retrograde conduction"
+  },
+  "junctional bradycardia": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_junctional bradycardia",
+    "clean_name": "junctional bradycardia"
+  },
+  "wolff-parkinson-white": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_wolff-parkinson-white",
+    "clean_name": "wolff-parkinson-white"
+  },
+  "with complete heart block": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "conduction_general",
+    "clean_name": "with complete heart block"
+  },
+  "with variable av block": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "av_block",
+    "clean_name": "with variable av block"
+  },
+  "acute pericarditis": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_acute pericarditis",
+    "clean_name": "acute pericarditis"
+  },
+  "posterior infarct": {
+    "level": 3,
+    "category": "Ischemia/Infarct",
+    "group_id": "infarct_general",
+    "clean_name": "posterior infarct"
+  },
+  "sinus/atrial capture": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "sinus_normal",
+    "clean_name": "sinus/atrial capture"
+  },
+  "with junctional escape complexes": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_with junctional escape complexes",
+    "clean_name": "with junctional escape complexes"
+  },
+  "inferolateral injury pattern": {
+    "level": 3,
+    "category": "Ischemia/Infarct",
+    "group_id": "infarct_inferior",
+    "clean_name": "inferolateral injury pattern"
+  },
+  "anterolateral injury pattern": {
+    "level": 3,
+    "category": "Ischemia/Infarct",
+    "group_id": "infarct_lateral",
+    "clean_name": "anterolateral injury pattern"
+  },
+  "with 2nd degree sa block mobitz ii": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "conduction_general",
+    "clean_name": "with 2nd degree sa block mobitz ii"
+  },
+  "av dual-paced complexes": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "pacemaker",
+    "clean_name": "av dual-paced complexes"
+  },
+  "biventricular hypertrophy": {
+    "level": 3,
+    "category": "Hypertrophy",
+    "group_id": "hypertrophy_general",
+    "clean_name": "biventricular hypertrophy"
+  },
+  "abnormal right axis deviation": {
+    "level": 3,
+    "category": "Other",
+    "group_id": "axis_deviation",
+    "clean_name": "abnormal right axis deviation"
+  },
+  "idioventricular rhythm": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_idioventricular rhythm",
+    "clean_name": "idioventricular rhythm"
+  },
+  "with sinus pause": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "sinus_normal",
+    "clean_name": "with sinus pause"
+  },
+  "rbbb and left anterior fascicular block": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "rbbb",
+    "clean_name": "rbbb and left anterior fascicular block"
+  },
+  "atrial-paced complexes": {
+    "level": 2,
+    "category": "Rhythm",
+    "group_id": "pacemaker",
+    "clean_name": "atrial-paced complexes"
+  },
+  "multifocal atrial tachycardia": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_multifocal atrial tachycardia",
+    "clean_name": "multifocal atrial tachycardia"
+  },
+  "with av dissociation": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_with av dissociation",
+    "clean_name": "with av dissociation"
+  },
+  "with 2:1 av conduction": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_with 2:1 av conduction",
+    "clean_name": "with 2:1 av conduction"
+  },
+  "supraventricular complexes": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_supraventricular complexes",
+    "clean_name": "supraventricular complexes"
+  },
+  "with 2nd degree av block mobitz i": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "av_block",
+    "clean_name": "with 2nd degree av block mobitz i"
+  },
+  "rbbb and left posterior fascicular block": {
+    "level": 3,
+    "category": "Conduction",
+    "group_id": "rbbb",
+    "clean_name": "rbbb and left posterior fascicular block"
+  },
+  "acute": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_acute",
+    "clean_name": "acute"
+  },
+  "ventricular tachycardia": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_ventricular tachycardia",
+    "clean_name": "ventricular tachycardia"
+  },
+  "anterolateral leads": {
+    "level": 3,
+    "category": "Uncategorized",
+    "group_id": "uncat_anterolateral leads",
+    "clean_name": "anterolateral leads"
+  }
+}

@@ -60,18 +60,8 @@ function App() {
           const rMod = await retrievalModules[rKey]();
           const list = [...(rMod.default || rMod)]; // Copy array to avoid mutation issues
 
-          // [NEW] If VisualTwins, we want to fully load the first retrieved case (The Twin)
-          if (currentTask.taskType === 'VisualTwins' && list.length > 0) {
-            const twinSummary = list[0];
-            const twinFileName = twinSummary.fileName.split('/').pop();
-            const twinKey = Object.keys(caseModules).find(k => k.endsWith(twinFileName));
-            if (twinKey) {
-              const twinMod = await caseModules[twinKey]();
-              // Replace the summary item with full detail item
-              const twinDetail = twinMod.default || twinMod;
-              list[0] = { ...twinDetail, similarity: twinSummary.similarity };
-            }
-          }
+          // [REMOVED] Single Twin Pre-loading. Now using DiverseView for list.
+          // if (currentTask.taskType === 'VisualTwins' && list.length > 0) { ... }
           setRetrievedCases(list);
         } else {
           setRetrievedCases([]);
@@ -115,11 +105,12 @@ function App() {
 
       {/* Main Content View Switcher */}
       <main className="flex-1 overflow-hidden p-4 relative">
-        {currentTask.taskType === 'VisualTwins' ? (
-          <TwinView queryCase={queryCase} twinCase={retrievedCases[0]} />
-        ) : (
-          <DiverseView queryCase={queryCase} diverseCases={retrievedCases} />
-        )}
+        {/* Unified View for Multiple Candidates */}
+        <DiverseView
+          queryCase={queryCase}
+          diverseCases={retrievedCases}
+          viewMode={currentTask.taskType === 'VisualTwins' ? 'candidates' : 'variations'}
+        />
       </main>
     </div>
   );
