@@ -1,5 +1,5 @@
 import React from 'react';
-import { generateECGPath } from '../../utils/ecgRenderer';
+import { Activity } from 'lucide-react';
 
 const RetrievalCard = ({ item, onClick, index }) => {
     return (
@@ -14,20 +14,12 @@ const RetrievalCard = ({ item, onClick, index }) => {
                 </div>
             </div>
 
-            <div className="flex flex-wrap gap-1 mb-2">
-                {item.diagnosis.slice(0, 3).map((tag, i) => (
+            <div className="flex flex-wrap gap-1 mb-1">
+                {item.diagnosis.map((tag, i) => (
                     <span key={i} className="text-[10px] bg-slate-50 text-slate-600 px-1.5 py-0.5 rounded border border-slate-200 font-medium">
                         {tag}
                     </span>
                 ))}
-                {item.diagnosis.length > 3 && <span className="text-[10px] text-slate-400 px-1">+</span>}
-            </div>
-
-            {/* Mini Rhythm Strip Preview */}
-            <div className="h-12 w-full bg-red-50/30 border border-red-100 rounded overflow-hidden opacity-70 group-hover:opacity-100 transition-opacity">
-                <svg className="w-full h-full" preserveAspectRatio="none">
-                    <path d={generateECGPath(200, 20, "dynamic", index)} fill="none" stroke="#ef4444" strokeWidth="1" />
-                </svg>
             </div>
         </div>
     );

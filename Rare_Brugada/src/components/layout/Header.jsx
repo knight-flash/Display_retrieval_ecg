@@ -1,12 +1,40 @@
 import React from 'react';
-import { Share2, User, ChevronDown } from 'lucide-react';
+import { Share2, User, ChevronDown, Database } from 'lucide-react';
 
-const Header = ({ doctorName = "Dr. Yan", version = "BETA v2.1", onPrevPatient, onNextPatient, currentPatientIndex, totalPatients }) => {
+const Header = ({
+    doctorName = "Dr. Yan",
+    version = "BETA v2.1",
+    onPrevPatient,
+    onNextPatient,
+    currentPatientIndex,
+    totalPatients,
+    databases = [],
+    currentDatabase,
+    onDatabaseChange
+}) => {
     return (
         <header className="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-6 shadow-sm shrink-0 z-10">
-            <div className="flex items-center gap-3">
-                <h1 className="text-lg font-bold text-slate-900 tracking-tight">ECG-RAG <span className="text-slate-400 font-normal">Clinical Assistant</span></h1>
-                <span className="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-100">{version}</span>
+            <div className="flex items-center gap-6">
+                <div className="flex items-center gap-3">
+                    <h1 className="text-lg font-bold text-slate-900 tracking-tight">ECG-RAG <span className="text-slate-400 font-normal">Clinical Assistant</span></h1>
+                    <span className="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-100">{version}</span>
+                </div>
+
+                {/* Database Selector */}
+                {databases.length > 0 && (
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg border border-slate-200">
+                        <Database size={14} className="text-slate-500" />
+                        <select
+                            value={currentDatabase}
+                            onChange={(e) => onDatabaseChange(e.target.value)}
+                            className="bg-transparent text-sm font-semibold text-slate-700 outline-none cursor-pointer min-w-[100px]"
+                        >
+                            {databases.map(db => (
+                                <option key={db} value={db}>{db}</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
             </div>
             <div className="flex items-center gap-4">
                 {/* Patient Navigation */}

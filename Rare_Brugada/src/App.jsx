@@ -1,32 +1,61 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import Header from './components/layout/Header';
 import MonitorPanel from './components/monitor/MonitorPanel';
-import TwinView from './components/special/TwinView';
+
 import DiverseView from './components/special/DiverseView';
 
 // Globals
 // Globals
-const manifestModules = import.meta.glob('./data/database2/manifest.json');
-const caseModules = import.meta.glob('./data/database2/cases/*.json');
-const retrievalModules = import.meta.glob('./data/database2/retrievals/*.json');
+const allManifestModules = import.meta.glob('./data/*/manifest.json');
+const allCaseModules = import.meta.glob('./data/*/cases/*.json');
+const allRetrievalModules = import.meta.glob('./data/*/retrievals/*.json');
 
 function App() {
+  // --- DATABASE STATE ---
+  const [databases, setDatabases] = useState([]);
+  const [currentDatabase, setCurrentDatabase] = useState(null);
+
+  // Discover Databases
+  useEffect(() => {
+    const dbNames = Object.keys(allManifestModules).map(path => {
+      const parts = path.split('/');
+      return parts[2]; // ./data/[database]/manifest.json
+    });
+    setDatabases(dbNames);
+    if (dbNames.length > 0 && !currentDatabase) {
+      // Prefer 'database2' if exists (default for Rare_Brugada)
+      setCurrentDatabase(dbNames.includes('database2') ? 'database2' : dbNames[0]);
+    }
+  }, []);
+
   const [manifest, setManifest] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentTask, setCurrentTask] = useState(null);
 
-  // Load Manifest
+  // Load Manifest when DB Changes
   useEffect(() => {
+    if (!currentDatabase) return;
+
     async function load() {
-      for (const path in manifestModules) {
-        const mod = await manifestModules[path]();
-        const data = mod.default || mod;
-        setManifest(data);
-        if (data.length > 0) setCurrentTask(data[0]);
+      try {
+        const path = `./data/${currentDatabase}/manifest.json`;
+        if (allManifestModules[path]) {
+          const mod = await allManifestModules[path]();
+          const data = mod.default || mod;
+          setManifest(data);
+          if (data.length > 0) {
+            setCurrentIndex(0);
+            setCurrentTask(data[0]);
+          } else {
+            setCurrentTask(null);
+          }
+        }
+      } catch (e) {
+        console.error("Error loading manifest:", e);
       }
     }
     load();
-  }, []);
+  }, [currentDatabase]);
 
   // Update Task when Index Changes
   useEffect(() => {
@@ -40,28 +69,48 @@ function App() {
   const [retrievedCases, setRetrievedCases] = useState([]);
 
   useEffect(() => {
-    if (!currentTask) return;
+    if (!currentTask || !currentDatabase) return;
 
     async function fetchData() {
       try {
         // Load Query Case
-        const casePath = `./data/database2/${currentTask.fileName}`;
+        const casePath = `./data/${currentDatabase}/${currentTask.fileName}`;
         // Find matching key
-        const caseKey = Object.keys(caseModules).find(k => k.endsWith(currentTask.fileName.split('/').pop()));
+        const caseKey = Object.keys(allCaseModules).find(k => k === casePath) ||
+          Object.keys(allCaseModules).find(k => k.endsWith(currentTask.fileName.split('/').pop()));
+
         if (caseKey) {
-          const cMod = await caseModules[caseKey]();
+          const cMod = await allCaseModules[caseKey]();
           setQueryCase(cMod.default || cMod);
         }
 
         // Load Retrieval List
         const rName = currentTask.retrievalFile.split('/').pop();
-        const rKey = Object.keys(retrievalModules).find(k => k.endsWith(rName));
-        if (rKey) {
-          const rMod = await retrievalModules[rKey]();
-          const list = [...(rMod.default || rMod)]; // Copy array to avoid mutation issues
+        const rPath = `./data/${currentDatabase}/retrievals/${rName}`;
 
-          // [REMOVED] Single Twin Pre-loading. Now using DiverseView for list.
-          // if (currentTask.taskType === 'VisualTwins' && list.length > 0) { ... }
+        const rKey = Object.keys(allRetrievalModules).find(k => k === rPath) ||
+          Object.keys(allRetrievalModules).find(k => k.endsWith(rName));
+
+        if (rKey) {
+          const rMod = await allRetrievalModules[rKey]();
+          const list = [...(rMod.default || rMod)];
+
+          // [VisualTwins Logic] Fully load the first retrieved case (The Twin)
+          // This is required because TwinView expects 'leads' which are not in the summary list
+          if (currentTask.taskType === 'VisualTwins' && list.length > 0) {
+            const twinSummary = list[0];
+            const twinFileName = twinSummary.fileName.split('/').pop();
+            // Try to find twin case in same DB
+            const twinPath = `./data/${currentDatabase}/cases/${twinFileName}`;
+            const twinKey = Object.keys(allCaseModules).find(k => k === twinPath) ||
+              Object.keys(allCaseModules).find(k => k.endsWith(twinFileName));
+
+            if (twinKey) {
+              const twinMod = await allCaseModules[twinKey]();
+              const twinDetail = twinMod.default || twinMod;
+              list[0] = { ...twinDetail, similarity: twinSummary.similarity };
+            }
+          }
           setRetrievedCases(list);
         } else {
           setRetrievedCases([]);
@@ -72,10 +121,10 @@ function App() {
       }
     }
     fetchData();
-  }, [currentTask]);
+  }, [currentTask, currentDatabase]);
 
   if (!currentTask || !queryCase) {
-    return <div className="flex items-center justify-center h-screen bg-slate-100">Loading Task...</div>;
+    return <div className="flex items-center justify-center h-screen bg-slate-100">Loading Task... (Check Database Selection)</div>;
   }
 
   return (
@@ -88,6 +137,9 @@ function App() {
         onNextPatient={() => setCurrentIndex(p => Math.min(manifest.length - 1, p + 1))}
         currentPatientIndex={currentIndex}
         totalPatients={manifest.length}
+        databases={databases}
+        currentDatabase={currentDatabase}
+        onDatabaseChange={setCurrentDatabase}
       />
 
       {/* Task Info Bar */}
@@ -105,12 +157,7 @@ function App() {
 
       {/* Main Content View Switcher */}
       <main className="flex-1 overflow-hidden p-4 relative">
-        {/* Unified View for Multiple Candidates */}
-        <DiverseView
-          queryCase={queryCase}
-          diverseCases={retrievedCases}
-          viewMode={currentTask.taskType === 'VisualTwins' ? 'candidates' : 'variations'}
-        />
+        <DiverseView queryCase={queryCase} diverseCases={retrievedCases} />
       </main>
     </div>
   );

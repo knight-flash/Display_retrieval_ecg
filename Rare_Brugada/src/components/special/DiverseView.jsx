@@ -4,7 +4,8 @@ import RetrievalCard from '../retrieval/RetrievalCard'; // Direct use to avoid R
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 
 // Load case files dynamically to fetch full signal data on demand
-const caseModules = import.meta.glob('../../data/database2/cases/*.json');
+// Load case files dynamically to fetch full signal data on demand
+const caseModules = import.meta.glob('../../data/*/cases/*.json');
 
 const DiverseView = ({ queryCase, diverseCases, viewMode = 'variations' }) => {
     // State to track which diverse case is "Selected" for comparison
