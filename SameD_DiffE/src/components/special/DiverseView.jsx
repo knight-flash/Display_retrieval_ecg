@@ -4,9 +4,21 @@ import RetrievalCard from '../retrieval/RetrievalCard'; // Direct use to avoid R
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 
 // Load case files dynamically to fetch full signal data on demand
-const caseModules = import.meta.glob('../../data/database/cases/*.json');
+// Load case files dynamically to fetch full signal data on demand
+const caseModules = import.meta.glob('../../data/*/cases/*.json');
 
-const DiverseView = ({ queryCase, diverseCases }) => {
+// Helper to render tags
+const TagList = ({ tags }) => (
+    <div className="flex flex-wrap gap-1 mt-1">
+        {tags?.map((t, i) => (
+            <span key={i} className="px-1.5 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-semibold rounded border border-blue-100">
+                {t}
+            </span>
+        ))}
+    </div>
+);
+
+const DiverseView = ({ queryCase, diverseCases, manifest, currentIndex, onTaskChange }) => {
     // State to track which diverse case is "Selected" for comparison
     const [selectedCase, setSelectedCase] = useState(null);
     const [fullSelectedCase, setFullSelectedCase] = useState(null);
@@ -67,11 +79,14 @@ const DiverseView = ({ queryCase, diverseCases }) => {
         <div className="h-full w-full flex overflow-hidden">
             {/* 1. Left Panel: Disease Prototype (Reference) */}
             <div className="flex-1 flex flex-col min-w-0 border-r border-slate-200 bg-slate-50/50">
-                <div className="bg-blue-50 px-4 py-3 border-b border-blue-100 flex justify-between items-center shrink-0 h-14">
-                    <h3 className="font-bold text-blue-900 flex items-center gap-2">
-                        <span className="bg-blue-200 text-blue-700 text-xs px-2 py-0.5 rounded uppercase tracking-wider">Prototype</span>
-                        Reference Case
-                    </h3>
+                <div className="bg-blue-50 px-4 py-3 border-b border-blue-100 flex flex-col justify-center shrink-0 h-20">
+                    <div className="flex justify-between items-center">
+                        <h3 className="font-bold text-blue-900 flex items-center gap-2">
+                            <span className="bg-blue-200 text-blue-700 text-xs px-2 py-0.5 rounded uppercase tracking-wider">Prototype</span>
+                            Reference Case
+                        </h3>
+                    </div>
+                    <TagList tags={queryCase?.diagnosis} />
                 </div>
                 <div className="flex-1 relative p-2">
                     <MonitorPanel
@@ -82,18 +97,20 @@ const DiverseView = ({ queryCase, diverseCases }) => {
                 </div>
             </div>
 
-            {/* 2. Middle Panel: Selected Variation (Comparison) */}
             <div className="flex-1 flex flex-col min-w-0 border-r border-slate-200 bg-white">
-                <div className="bg-white px-4 py-3 border-b border-slate-100 flex justify-between items-center shrink-0 h-14">
-                    <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                        <span className="bg-purple-100 text-purple-700 text-xs px-2 py-0.5 rounded uppercase tracking-wider">Variation</span>
-                        Selected Manifestation
-                    </h3>
-                    {selectedCase && (
-                        <span className="text-xs font-mono text-slate-400">
-                            Sim: {(selectedCase.similarity * 100).toFixed(1)}%
-                        </span>
-                    )}
+                <div className="bg-white px-4 py-3 border-b border-slate-100 flex flex-col justify-center shrink-0 h-20">
+                    <div className="flex justify-between items-center">
+                        <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                            <span className="bg-purple-100 text-purple-700 text-xs px-2 py-0.5 rounded uppercase tracking-wider">Variation</span>
+                            Selected Manifestation
+                        </h3>
+                        {selectedCase && (
+                            <span className="text-xs font-mono text-slate-400">
+                                Sim: {(selectedCase.similarity * 100).toFixed(1)}%
+                            </span>
+                        )}
+                    </div>
+                    <TagList tags={selectedCase?.diagnosis} />
                 </div>
                 <div className="flex-1 relative p-2">
                     {fullSelectedCase ? (
