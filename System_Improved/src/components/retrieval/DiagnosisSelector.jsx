@@ -33,7 +33,7 @@ const DiagnosisSelector = ({ activeGroup, onChange, groups = [] }) => {
                         <span>Relevance Score</span>
                     </div>
                     <div className="max-h-64 overflow-y-auto custom-scrollbar">
-                        {groups.map((group) => (
+                        {[...groups].sort((a, b) => b.supportCount - a.supportCount).map((group) => (
                             <button
                                 key={group.rank}
                                 onClick={() => {

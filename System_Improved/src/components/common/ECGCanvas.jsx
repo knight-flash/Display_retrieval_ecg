@@ -1,15 +1,23 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { generateECGPath, dataToPath } from '../../utils/ecgRenderer';
 
 /**
- * ECGCanvas Component - Full Implementation
+ * ECGCanvas Component - Standardized Medical Scale Implementation
  * 
- * Features:
- * 1. Full 12-lead scrollable display
- * 2. Grid background moves with content (CSS-based)
- * 3. Responsive fluid width (100% container)
- * 4. Fixed bottom time axis
- * 5. Proper scrolling functionality
+ * Corrections:
+ * 1. Horizontal Scrolling: Validated 10s data on standard grid.
+ * 2. Scale: 
+ *    - Paper Speed 25mm/s.
+ *    - 1 large grid (5mm) = 0.2s.
+ *    - 1 small grid (1mm) = 0.04s.
+ *    - 10s = 50 large grids.
+ *    - Using 50px per large grid (screen representation):
+ *      Total Width = 50 * 50px = 2500px.
+ * 
+ * Configuration:
+ * - Container Width: Fixed 2500px to force scroll.
+ * - SVG ViewBox: 0 0 2500 80.
+ * - Data Rendering: Stretched to 2500px.
  */
 const ECGCanvas = ({ activeGroupRank = 1, isCompact = false, signalData = null, leads = null }) => {
     const leadNames = [
@@ -17,58 +25,60 @@ const ECGCanvas = ({ activeGroupRank = 1, isCompact = false, signalData = null, 
         "V1", "V2", "V3", "V4", "V5", "V6"
     ];
 
+    // Standard Width Calculation for 10s at 25mm/s (assuming 50px = 5mm large grid)
+    const STANDARD_WIDTH_PX = 2500;
+
     return (
         <div className="h-full w-full relative bg-white overflow-hidden">
 
-            {/* Scrollable Container with Grid Background */}
-            <div className="h-full overflow-y-auto custom-scrollbar relative">
+            {/* Scrollable Container (Both X and Y) */}
+            <div className="h-full w-full overflow-auto custom-scrollbar relative z-0">
 
-                {/* Content Wrapper with ECG Grid Background */}
-                <div className="relative w-full"
+                {/* Fixed Width Content Wrapper to Enforce 10s Scale */}
+                <div
+                    className="relative"
                     style={{
+                        width: `${STANDARD_WIDTH_PX}px`,
                         // Standard ECG Grid: Small 1mm boxes, Large 5mm boxes
+                        // Layering: Large Grid (Darker/Thicker 2px) on TOP, then Small Grid
                         backgroundImage: `
+                            linear-gradient(#fca5a5 1.25px, transparent 1.25px), 
+                            linear-gradient(90deg, #fca5a5 1.25px, transparent 1.25px),
                             linear-gradient(#ffe4e6 1px, transparent 1px), 
-                            linear-gradient(90deg, #ffe4e6 1px, transparent 1px), 
-                            linear-gradient(#fca5a5 1px, transparent 1px), 
-                            linear-gradient(90deg, #fca5a5 1px, transparent 1px)
+                            linear-gradient(90deg, #ffe4e6 1px, transparent 1px)
                         `,
-                        backgroundSize: '10px 10px, 10px 10px, 50px 50px, 50px 50px',
-                        backgroundAttachment: 'local' // Ensures bg scrolls with content
+                        // Matching sizes for the layers above: 50px (Large), 50px (Large), 10px (Small), 10px (Small)
+                        backgroundSize: '50px 50px, 50px 50px, 10px 10px, 10px 10px',
+                        backgroundAttachment: 'local'
                     }}
                 >
                     {leadNames.map((leadName, i) => {
                         let pathData;
                         // Use real lead data if available (Scale: 50 units = 1mV to match 10mm grid)
                         if (leads && leads[leadName]) {
-                            pathData = dataToPath(leads[leadName], 500, 80, 50);
+                            pathData = dataToPath(leads[leadName], STANDARD_WIDTH_PX, 80, 50);
                         }
                         // Fallback to preview signal if available
                         else if (signalData) {
-                            pathData = dataToPath(signalData, 500, 80, 50);
+                            pathData = dataToPath(signalData, STANDARD_WIDTH_PX, 80, 50);
                         }
                         // Fallback to synthetic
                         else {
-                            pathData = generateECGPath(500, 40, "dynamic", i, activeGroupRank);
+                            pathData = generateECGPath(STANDARD_WIDTH_PX, 40, "dynamic", i, activeGroupRank);
                         }
 
                         return (
-                            <div key={i} className="h-40 border-b border-red-200 relative shrink-0">
-                                {/* Lead Label */}
-                                <span className="absolute top-1 left-2 text-xs font-bold text-slate-500 z-10 bg-white/60 px-1 rounded backdrop-blur-[2px]">
-                                    {leadName}
-                                </span>
+                            <div key={i} className="h-40 border-b-2 border-red-400 relative shrink-0">
+                                {/* Lead Label - Enhanced Visibility, Sticky Left */}
+                                <div className="sticky left-0 z-10 top-1 ml-2 mt-1 inline-block">
+                                    <span className="text-xs font-bold text-red-900 bg-white/90 px-1.5 py-0.5 rounded backdrop-blur-[2px] border border-red-100 shadow-sm">
+                                        {leadName}
+                                    </span>
+                                </div>
 
                                 {/* ECG Path Container */}
                                 <div className="absolute inset-0 flex items-center w-full h-full">
-                                    {/* 
-                                    SVG Configuration:
-                                    - width/height: 100% to fill container
-                                    - viewBox: "0 0 500 80" defines coordinate system
-                                    - preserveAspectRatio: "none" stretches to fit container
-                                    - vectorEffect: "non-scaling-stroke" keeps line thickness constant during stretch
-                                     */}
-                                    <svg viewBox="0 0 500 80" preserveAspectRatio="none" className="w-full h-full text-slate-800 display-block">
+                                    <svg viewBox={`0 0 ${STANDARD_WIDTH_PX} 80`} preserveAspectRatio="none" className="w-full h-full text-slate-800 display-block">
                                         <path
                                             d={pathData}
                                             fill="none"
@@ -84,31 +94,34 @@ const ECGCanvas = ({ activeGroupRank = 1, isCompact = false, signalData = null, 
                         );
                     })}
 
-                    {/* Bottom Spacer to ensure last lead doesn't get cut off by Time Axis */}
+                    {/* Bottom Spacer */}
                     {!isCompact && <div className="h-4" />}
                 </div>
-            </div>
 
-            {/* Time Axis (Fixed at bottom of Component) */}
-            {!isCompact && (
-                <div className="h-8 shrink-0 bg-white/95 backdrop-blur border-t border-red-200 relative select-none z-20 shadow-[0_-2px_10px_rgba(0,0,0,0.02)]">
-                    {/* Ticks 0-10s using Percentage for Fluid Layout */}
-                    <div className="absolute inset-0 w-full">
-                        {Array.from({ length: 11 }).map((_, i) => (
-                            <div key={i} className="absolute top-0 h-full flex flex-col items-center" style={{ left: `${i * 10}%`, transform: 'translateX(-50%)' }}>
-                                <div className="h-1.5 w-px bg-red-400 mb-0.5"></div>
-                                <span className="text-[10px] text-slate-400 font-mono font-medium leading-none">
-                                    {i}s
-                                </span>
-                            </div>
-                        ))}
-                        {/* Minor Ticks (every 2%) */}
-                        {Array.from({ length: 51 }).map((_, i) => (
-                            <div key={`tick-${i}`} className="absolute top-0 h-1 w-px bg-red-200" style={{ left: `${i * 2}%` }}></div>
-                        ))}
+                {/* Time Axis (Fixed at bottom relative to scroll content? No, ideally sticky) 
+                     If we put it here inside scroll, it scrolls with content. 
+                     That allows seeing "8s", "9s" etc. 
+                 */}
+                {!isCompact && (
+                    <div className="h-8 shrink-0 bg-white/80 backdrop-blur border-t-2 border-red-400 relative select-none shadow-[0_-2px_10px_rgba(0,0,0,0.02)]" style={{ width: `${STANDARD_WIDTH_PX}px` }}>
+                        <div className="absolute inset-0 w-full">
+                            {/* 10s = 50 grids = 2500px. 1s = 250px. */}
+                            {Array.from({ length: 11 }).map((_, i) => (
+                                <div key={i} className="absolute top-0 h-full flex flex-col items-center" style={{ left: `${i * 250}px`, transform: 'translateX(-50%)' }}>
+                                    <div className="h-1.5 w-px bg-red-500 mb-0.5"></div>
+                                    <span className="text-[10px] text-slate-500 font-mono font-bold leading-none">
+                                        {i}s
+                                    </span>
+                                </div>
+                            ))}
+                            {/* Minor Ticks (0.2s = 50px) */}
+                            {Array.from({ length: 51 }).map((_, i) => (
+                                <div key={`tick-${i}`} className="absolute top-0 h-1 w-px bg-red-300" style={{ left: `${i * 50}px` }}></div>
+                            ))}
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     )
 };
