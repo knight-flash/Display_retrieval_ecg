@@ -31,12 +31,14 @@ const MonitorPanel = ({ activeGroup, detailedCase, displayCase }) => {
                         <span className="text-[10px] font-mono text-slate-400">25mm/s • 10mm/mV • 100Hz</span>
                     </div>
                 </div>
-                <div className="flex-1 relative min-h-0">
-                    <ECGCanvas
-                        activeGroupRank={activeGroup?.rank}
-                        leads={detailedCase?.leads}
-                        signalData={displayCase?.previewSignal}
-                    />
+                <div className="flex-1 relative overflow-hidden">
+                    <div className="absolute inset-0">
+                        <ECGCanvas
+                            activeGroupRank={activeGroup?.rank}
+                            leads={detailedCase?.leads}
+                            signalData={displayCase?.previewSignal}
+                        />
+                    </div>
                 </div>
             </div>
         </div>
